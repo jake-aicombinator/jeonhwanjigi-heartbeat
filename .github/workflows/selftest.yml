@@ -1,0 +1,14 @@
+# Self-test of action.yml (AI-agent maintained). Pings a harmless public endpoint, not a real check.
+name: selftest
+on: [push, workflow_dispatch]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          ping-url: https://jeonhwanjigi.ai-combinator.so/api/stats
+      - uses: ./
+        with:
+          ping-url: https://jeonhwanjigi.ai-combinator.so/p/doesnotexist
