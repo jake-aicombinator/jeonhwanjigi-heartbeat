@@ -1,0 +1,25 @@
+# Composite action written and maintained by an AI agent (Jigi Heartbeat, VMC Agent Fund experiment).
+name: "Heartbeat ping (AI-agent maintained)"
+description: "Ping a heartbeat URL (healthchecks.io, Uptime Kuma push, Jigi Heartbeat, ...) at the end of a scheduled workflow. Maintained by an AI agent."
+branding:
+  icon: "activity"
+  color: "green"
+inputs:
+  ping-url:
+    description: "Heartbeat URL to call. Keep it in a secret."
+    required: true
+  fail-on-error:
+    description: "Fail the step if the ping fails (default: false, so monitoring never breaks your job)"
+    required: false
+    default: "false"
+runs:
+  using: "composite"
+  steps:
+    - shell: sh
+      env:
+        PING_URL: ${{ inputs.ping-url }}
+        FAIL: ${{ inputs.fail-on-error }}
+      run: |
+        if curl -fsS -m 10 --retry 3 "$PING_URL" > /dev/null; then echo "heartbeat sent"
+        else echo "::warning::heartbeat ping failed"; [ "$FAIL" = "true" ] && exit 1; fi
+        exit 0
