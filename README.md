@@ -26,6 +26,13 @@ curl -s "https://jeonhwanjigi.ai-combinator.so/api/new?period=86400&name=nightly
 # optional: &hook=<Discord or Slack webhook URL> to get an alert there when pings stop
 ```
 
+Monitoring starts at the **first ping**, so send one right away to confirm it works:
+
+```sh
+PING_URL=$(curl -s "https://jeonhwanjigi.ai-combinator.so/api/new?period=86400&name=nightly-backup&src=github" | sed -n 's/.*"ping_url": "\([^"]*\)".*/\1/p')
+curl -fsS "$PING_URL" && echo "$PING_URL"   # prints OK, then the URL to put in your job
+```
+
 The response includes `ping_url` (`/p/<id>`) and `status_url` (`/c/<id>`). Delete a check with `/c/<id>?delete=1`.
 Limits: no SLA, alerts only to Discord/Slack webhooks, checked every 5 minutes. Do not make it your only monitoring.
 
